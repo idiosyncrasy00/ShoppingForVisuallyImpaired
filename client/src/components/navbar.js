@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import './navbar.css'
 import { useSelector, useDispatch } from "react-redux";
 import { getLoginInfo } from "../redux/loginInfo";
 import { useNavigate } from 'react-router-dom';
+import { Navbar, Container, Nav } from 'react-bootstrap';
 
 
 function IsLoggedIn() {
@@ -32,7 +32,7 @@ function IsLoggedIn() {
   // )
 }
 
-function Navbar() {
+function navbar() {
   return (
     // <nav class="sticky top-0 z-50 flex items-center justify-between flex-wrap bg-teal-500 p-6">
     //   <div class="flex items-center flex-shrink-0 text-white mr-6">
@@ -66,13 +66,15 @@ function Navbar() {
         <Container>
           <Navbar.Brand href="#home">Navbar</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
-            <Nav.Link href="#pricing">Pricing</Nav.Link>
+            <Nav.Link><Link to="/">Home</Link></Nav.Link>
+            <Nav.Link><Link to="/about">About us</Link></Nav.Link>
+            <Nav.Link><Link to="/login">Sign in</Link></Nav.Link>
+            <Nav.Link><Link to="/register">Sign up</Link></Nav.Link>
           </Nav>
         </Container>
       </Navbar>
+    </>
   );
 }
 
-export default Navbar;
+export default navbar;

@@ -1,5 +1,5 @@
 //import { Home, About, Login, Register } from '../pages/index';
-import Home from '../pages/HomePage2'
+import Home from '../pages/HomePage'
 import Login from '../pages/LoginPage'
 import Register from '../pages/RegisterPage'
 import Profile from '../pages/ProfilePage'

@@ -4,9 +4,7 @@ import './index.css';
 import App from './App';
 import '../node_modules/bootstrap/dist/css/bootstrap.css';
 import { Provider } from "react-redux";
-//import { Persistor } from './redux/store';
-//import store from './store/store';
-//import { Persistor, store } from './redux/store';
+//import 'bootstrap/dist/css/bootstrap.min.css';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 import store from './redux/store'
