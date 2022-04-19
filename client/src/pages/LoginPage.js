@@ -2,10 +2,10 @@ import LoginForm from '../components/LoginPage/LoginUI'
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
-//import { login } from "../actions/login";
-//import { loginError } from "../redux/loginInfo";
-//import PageNavigation from "./index"
 import { login } from "../adapters/auth.service"
+import alanBtn from '@alan-ai/alan-sdk-web';
+
+const alanKey = '57c5f11b359672b1fc9ce54571064ed92e956eca572e1d8b807a3e2338fdd0dc/stage';
 
 function LoginPage() {
   const [loginForm, setLoginForm] = useState({
@@ -13,12 +13,30 @@ function LoginPage() {
     password: '',
   });
   const dispatch = useDispatch();
-  //let IsLoggedIn = false;
-  useEffect(() => {
-    console.log('use effect random');
-  }, [])
   const navigate = useNavigate();
-  //const errorMsg = useSelector((state) => state.loginError);
+
+  useEffect(() => {
+    function updateScreen() {
+      alanBtn({
+        key: alanKey,
+        onCommand: ({ command }) => {
+          if (command === 'home_navigation') {
+            //do something
+            navigate('/');
+          }
+          if (command === 'login_navigation') {
+            //do something
+            navigate('/login');
+          }
+          if (command === 'register_navigation') {
+            //do something
+            navigate('/register');
+          }
+        }
+      })
+    }
+    requestAnimationFrame(updateScreen)
+  });
 
   function loginChange(e) {
     console.log("loginChange");
@@ -51,7 +69,7 @@ function LoginPage() {
       <LoginForm
         loginChange={loginChange}
         loginHandler={loginHandler}
-        //loginChange={e => setLoginForm(e.target.value)}
+      //loginChange={e => setLoginForm(e.target.value)}
       />
     </>
   );
