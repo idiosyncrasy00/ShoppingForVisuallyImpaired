@@ -60,33 +60,6 @@ function LoginPage() {
             default:
               console.log('Unknown command: ' + commandData.command);
           }
-
-          // if (commandData.command === 'home_navigation') {
-          //   //do something
-          //   navigate('/');
-          // }
-          // if (commandData.command === 'login_navigation') {
-          //   //do something
-          //   navigate('/login');
-          // }
-          // if (commandData.command === 'register_navigation') {
-          //   //do something
-          //   navigate('/register');
-          // }
-          // //form filling
-          // if (commandData.command === 'start_filling_in_the_login') {
-          //   console.log("Ready to fill....");
-          // }
-          // if (commandData.command === 'get_username') {
-          //   alert(commandData.text);
-          //   //setUserName(commandData.text);
-          //   document.getElementById('username').value = commandData.text;
-          // }
-          // if (commandData.command === 'get_password') {
-          //   alert(commandData.text);
-          //   //setUserName(commandData.text);
-          //   document.getElementById('password').value = commandData.text;
-          // }
         }
       })
     }
