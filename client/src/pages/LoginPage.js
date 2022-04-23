@@ -20,27 +20,73 @@ function LoginPage() {
       alanBtn({
         key: alanKey,
         onCommand: function (commandData) {
-          if (commandData.command === 'home_navigation') {
-            //do something
-            navigate('/');
+          switch (commandData.command) {
+            case 'home_navigation':
+              navigate('/');
+              break;
+            case 'login_navigation':
+              navigate('/login');
+              break;
+            case 'register_navigation':
+              navigate('/register');
+              break;
+            case 'start_filling_in_the_login':
+              console.log("Ready to fill....");
+              break;
+            case 'get_username':
+              //setUserName(commandData.text);
+              if (/\s/.test(commandData.item)) {
+                commandData.item = commandData.item.replace(/\s+/g, '');
+              }
+              alert(commandData.item);
+              setUserName(commandData.item);
+              document.getElementById('username').value = commandData.item;
+              break;
+            case 'get_password':
+              if (/\s/.test(commandData.item)) {
+                commandData.item = commandData.item.replace(/\s+/g, '');
+              }
+              alert(commandData.item);
+              setPassword(commandData.item);
+              document.getElementById('password').value = commandData.item;
+              break;
+            case 'click_login':
+              //loginHandler(e);
+              //e.preventDefault();
+              const username = document.getElementById('username').value;
+              const password = document.getElementById('password').value;
+              alert("Username: " + username + " Password: " + password);
+              break;
+            default:
+              console.log('Unknown command: ' + commandData.command);
           }
-          if (commandData.command === 'login_navigation') {
-            //do something
-            navigate('/login');
-          }
-          if (commandData.command === 'register_navigation') {
-            //do something
-            navigate('/register');
-          }
-          //form filling
-          if (commandData.command === 'start_filling_in_the_login') {
-            console.log("Ready to fill....");
-          }
-          if (commandData.command === 'get_username') {
-            alert(commandData.text);
-            setUserName(commandData.text);
-            //document.getElementById('username').value = commandData.text;
-          }
+
+          // if (commandData.command === 'home_navigation') {
+          //   //do something
+          //   navigate('/');
+          // }
+          // if (commandData.command === 'login_navigation') {
+          //   //do something
+          //   navigate('/login');
+          // }
+          // if (commandData.command === 'register_navigation') {
+          //   //do something
+          //   navigate('/register');
+          // }
+          // //form filling
+          // if (commandData.command === 'start_filling_in_the_login') {
+          //   console.log("Ready to fill....");
+          // }
+          // if (commandData.command === 'get_username') {
+          //   alert(commandData.text);
+          //   //setUserName(commandData.text);
+          //   document.getElementById('username').value = commandData.text;
+          // }
+          // if (commandData.command === 'get_password') {
+          //   alert(commandData.text);
+          //   //setUserName(commandData.text);
+          //   document.getElementById('password').value = commandData.text;
+          // }
         }
       })
     }
@@ -50,7 +96,13 @@ function LoginPage() {
 
 
   function loginHandler(e) {
-    console.log("Username is " + username + " and Password is " + password);
+    //console.log("Username is " + username + " and Password is " + password);
+    // const email = document.getElementById('email').value;
+    // const phoneNumber = document.getElementById('phone-number').value;
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    console.log("Username: " + username + " Password: " + password);
   }
   return (
     <>
