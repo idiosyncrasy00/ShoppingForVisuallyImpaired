@@ -13,23 +13,45 @@ function HomePage2() {
   const loginForm = useSelector((state) => state.loginInfo.value);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useEffect((e) => {
     function updateScreen() {
       alanBtn({
         key: alanKey,
-        onCommand: ({ command }) => {
-          if (command === 'home_navigation') {
-            //do something
-            navigate('/');
+        onCommand: function (commandData) {
+          switch (commandData.command) {
+            case 'home_navigation':
+              navigate('/');
+              break;
+            case 'login_navigation':
+              navigate('/login');
+              break;
+            case 'register_navigation':
+              navigate('/register');
+              break;
+            default:
+              console.log('Unknown command: ' + commandData.command);
           }
-          if (command === 'login_navigation') {
-            //do something
-            navigate('/login');
-          }
-          if (command === 'register_navigation') {
-            //do something
-            navigate('/register');
-          }
+          // if (commandData.command === 'home_navigation') {
+          //   //do something
+          //   navigate('/');
+          // }
+          // if (commandData.command === 'login_navigation') {
+          //   //do something
+          //   navigate('/login');
+          // }
+          // if (commandData.command === 'register_navigation') {
+          //   //do something
+          //   navigate('/register');
+          // }
+          // //form filling
+          // if (commandData.command === 'start_filling_in_the_login') {
+          //   console.log("Ready to fill....");
+          // }
+          // if (commandData.command === 'get_username') {
+          //   alert(commandData.text);
+          //   setUserName(commandData.text);
+          //   //document.getElementById('username').value = commandData.text;
+          // }
         }
       })
     }
