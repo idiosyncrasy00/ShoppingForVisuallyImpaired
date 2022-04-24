@@ -1,0 +1,69 @@
+name: Discord Push Notification
+on: [push]
+jobs:
+  Create-Notification:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Fetch changed files
+        uses: tj-actions/changed-files@v18.7
+        id: changed
+        with:
+          separator: ' '
+      
+      - name: Manipulate file list 1
+        id: list
+        run: |
+          sformat () {
+            if [ -z "$1" ]; then js=[]
+            else
+              js=[
+              for f in $1; do js="${js}\"${f}\","; done
+              js=${js%?}]
+            fi
+          }
+          sformat "${{ steps.changed.outputs.added_files }}"
+          echo "::set-output name=added::$js"
+          sformat "${{ steps.changed.outputs.modified_files }}"
+          echo "::set-output name=modified::$js"
+          sformat "${{ steps.changed.outputs.deleted_files }}"
+          echo "::set-output name=deleted::$js"
+      
+      - name: Manipulate file list 2
+        id: json
+        run: |
+          echo "::set-output name=added::${{ toJSON(steps.list.outputs.added) }}"
+          echo "::set-output name=modified::${{ toJSON(steps.list.outputs.modified) }}"
+          echo "::set-output name=deleted::${{ toJSON(steps.list.outputs.deleted) }}"
+
+      - name: Get random color
+        id: color_id
+        run: echo "::set-output name=color::$(printf '%d%d%d' $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256)))"
+
+      - name: Manipulate commit message
+        id: message_id
+        run: echo "::set-output name=message::${{ github.event.head_commit.message }}"
+
+      - name: Discord
+        uses: Ilshidur/action-discord@master
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USERNAME: ${{ github.event.head_commit.author.username }}
+          DISCORD_AVATAR: "https://github.com/${{ github.event.head_commit.author.username }}.png"
+          DISCORD_EMBEDS: >-
+            [{
+              "title": "A commit has been pushed to ${{ github.ref }}",
+              "url": "${{ github.event.head_commit.url }}",
+              "description": "**Author:** ${{ github.event.head_commit.author.username }} \n**ID:** ${{ github.event.head_commit.id }} \n**Message:** \n```\n${{ steps.message_id.outputs.message }} ``` \n**Added:** \n```\n${{ join(fromJSON(steps.json.outputs.added), '\n') }} ``` \n**Modified:** \n```\n${{ join(fromJSON(steps.json.outputs.modified), '\n') }} ``` \n**Deleted:** \n```\n${{ join(fromJSON(steps.json.outputs.deleted), '\n') }} ```",
+              "color": "${{ steps.color_id.outputs.color }}",
+              "footer": {
+                "text": "${{ github.event.head_commit.timestamp }}",
+                "icon_url": "https://github.com/${{ github.event.head_commit.author.username }}.png"
+              }
+            }]
