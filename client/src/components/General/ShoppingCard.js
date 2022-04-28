@@ -26,7 +26,7 @@ function ShoppingCard(props) {
         <Card.Text>
           {text}
         </Card.Text>
-        {/* <Button variant="primary" onClick={addToTheCart}>Add to the cart</Button> */}
+        <Button variant="primary" onClick={addToTheCart}>Add to the cart</Button>
       </Card.Body>
     </Card>
   )
