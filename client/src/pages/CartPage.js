@@ -1,6 +1,7 @@
 import { Table, Button } from 'react-bootstrap'
 import { useSelector, useDispatch } from "react-redux";
 import { removeFromCart } from '../redux/cart'
+import { useSpeechSynthesis } from "react-speech-kit";
 
 function CartPage() {
   const cartInfo = useSelector((state) => state.cartInfo.items);

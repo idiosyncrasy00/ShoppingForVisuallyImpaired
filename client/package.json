@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@alan-ai/alan-button": "^1.9.24",
     "@alan-ai/alan-sdk-web": "^1.8.31",
     "@reduxjs/toolkit": "^1.8.0",
     "@testing-library/jest-dom": "^5.16.1",
@@ -21,6 +22,7 @@
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
+    "react-speech-kit": "^3.0.1",
     "redux-persist": "^6.0.0",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.2"

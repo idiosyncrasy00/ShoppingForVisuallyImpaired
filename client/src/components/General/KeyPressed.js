@@ -2,18 +2,40 @@ import React, { useState, useEffect } from "react";
 
 function useKeyPress(targetKey) {
   const [keyPressed, setKeyPressed] = useState(false);
+  //const [cancelKey, setcancelKey] = useState(false);
+  // const [upPressed, setUpPressed] = useState(false);
+  // const [downPressed, setDownPressed] = useState(false);
+  // const [leftPressed, setLeftPressed] = useState(false);
+  // const [rightPressed, setRightPressed] = useState(false);
 
-  function downHandler({ key }) {
+  const downHandler = ({ key }) => {
     if (key === targetKey) {
+      //setKeyPressed(true);
+      // setDownPressed(true);
+      // setUpPressed(false);
+      // setLeftPressed(false);
+      // setRightPressed(false);
       setKeyPressed(true);
     }
   }
 
   const upHandler = ({ key }) => {
     if (key === targetKey) {
+      //setKeyPressed(false);
+      // setDownPressed(false);
+      // setUpPressed(true);
+      // setLeftPressed(false);
+      // setRightPressed(false);
       setKeyPressed(false);
     }
   };
+
+  const cancelHandler = ({ key }) => {
+    if (key === targetKey) {
+      //setKeyPressed(false);
+
+    }
+  }
 
   // const leftHandler = ({ key }) => {
   //   if (key === targetKey) {

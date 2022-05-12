@@ -1,19 +1,20 @@
 import { useState, Fragment, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'react-bootstrap'
+import { Button, Row, Col, Form, FormControl } from 'react-bootstrap'
 import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+// import Row from 'react-bootstrap/Row'
+// import Col from 'react-bootstrap/Col'
 import ShoppingCard from '../components/General/ShoppingCard';
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from '../redux/cart'
+import { useSpeechSynthesis } from "react-speech-kit";
 
 
 import { alanBtn } from '@alan-ai/alan-sdk-web';
 import { useKeyPress } from '../components/General/KeyPressed'
 const alanKey = '57c5f11b359672b1fc9ce54571064ed92e956eca572e1d8b807a3e2338fdd0dc/stage';
 
-const itemArray = [
+const productsList = [
   {
     img: "",
     title: "Samsung galaxy note 2",
@@ -70,6 +71,10 @@ const itemArray = [
 ]
 
 function HomePage2() {
+  const [value, setValue] = useState('');
+  const { speak, cancel } = useSpeechSynthesis();
+
+
   //const cartInfo = useSelector((state) => state.cartInfo.value);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -77,14 +82,14 @@ function HomePage2() {
   const [cursor, setCursor] = useState(0);
   const [hovered, setHovered] = useState(undefined);
   const [selected, setSelected] = useState(undefined);
+  const [search, setSearch] = useState('');
   const ArrowDown = useKeyPress("ArrowDown");
   const ArrowUp = useKeyPress("ArrowUp");
-  // const ArrowLeft = useKeyPress("ArrowLeft");
-  // const ArrowRight = useKeyPress("ArrowRight");
   const enterPress = useKeyPress("Enter");
 
-  useEffect((e) => {
+  useEffect(() => {
     function updateScreen() {
+
       alanBtn({
         key: alanKey,
         onCommand: function (commandData) {
@@ -107,6 +112,18 @@ function HomePage2() {
     requestAnimationFrame(updateScreen)
   });
 
+  // useEffect(() => {
+  //   alanBtn({
+  //     key: '57c5f11b359672b1fc9ce54571064ed92e956eca572e1d8b807a3e2338fdd0dc/stage',
+  //     onCommand: (commandData) => {
+  //       if (commandData.command === 'home_navigation') {
+  //         // Call the client code that will react to the received command
+  //         navigate('/');
+  //       }
+  //     }
+  //   });
+  // }, []);
+
   function EnterRoom(e) {
     navigate("/search")
   }
@@ -115,62 +132,78 @@ function HomePage2() {
 
   }
 
-  function addToTheCart(id, item, e) {
-    e.preventDefault()
-    console.log(`Add item with id ${id} to the cart`);
+  function addToTheCart(item) {
+    //e.preventDefault()
+    //console.log(`Add item with id ${id} to the cart`);
     console.log(`ITem info is: ${item.title}, ${item.text}, ${item.price}`)
-    dispatch({
+    return dispatch(addToCart({
       title: item.title,
       text: item.text,
       price: item.price,
-    })
+    }))
   }
 
   useEffect(() => {
-    if (itemArray.length && ArrowDown) {
+    if (productsList.length && ArrowDown) {
       setCursor(prevState =>
-        prevState < itemArray.length - 1 ? prevState + 1 : prevState
+        prevState < productsList.length - 1 ? prevState + 1 : prevState
       );
     }
   }, [ArrowDown]);
   useEffect(() => {
-    if (itemArray.length && ArrowUp) {
+    if (productsList.length && ArrowUp) {
       setCursor(prevState => (prevState > 0 ? prevState - 1 : prevState));
     }
   }, [ArrowUp]);
-  // useEffect(() => {
-  //   if (itemArray.length && ArrowLeft) {
-  //     setCursor(prevState =>
-  //       prevState < itemArray.length - 1 ? prevState - 1 : prevState
-  //     );
-  //   }
-  // }, [ArrowLeft]);
-  // useEffect(() => {
-  //   if (itemArray.length && ArrowRight) {
-  //     setCursor(prevState => (prevState > 0 ? prevState + 1 : prevState));
-  //   }
-  // }, [ArrowRight]);
-  useEffect(() => {
-    if (itemArray.length && enterPress) {
-      setSelected(itemArray[cursor]);
+  useEffect((event) => {
+    //const timer = setTimeout(() => console.log('Initial timeout!'), 1000);
+    cancel();
+    const itemDetail = productsList[cursor];
+    //console.log(JSON.stringify(itemDetail.title));
+    // setText(prev => (prev = itemDetail.title))
+    // setTitle(prev => (prev = itemDetail.title));
+    // setPrice(prev => (prev = itemDetail.price))
+    //console.log(`Item info are ${itemDetail.title}, ${itemDetail.text}, ${itemDetail.price}. Would you like to buy this product?`);
+    //speak({ text: `Item info are ${itemDetail.title}, ${itemDetail.text}, ${itemDetail.price}. Would you like to buy this product?` })
+    if (productsList.length && enterPress) {
+      setSelected(cursor => productsList[cursor + 1]);
     }
-    console.log("Index is: " + cursor)
-  }, [cursor, enterPress]);
+    //console.log("Index is: " + itemDetail.text);
+  }, [cursor]);
   useEffect(() => {
-    if (itemArray.length && hovered) {
-      setCursor(itemArray.indexOf(hovered));
+    if (productsList.length && hovered) {
+      setCursor(productsList.indexOf(hovered));
+      console.log("Index hovered: " + hovered);
     }
   }, [hovered]);
+
+  function searchResult() {
+    console.log(search)
+    const filteredSearch = productsList.filter(product => {
+      return product.name.indexOf(search.toLowerCase()) !== -1;
+    })
+    return filteredSearch;
+  }
+
   return (
-    <>
-      <h1>Welcome back. What are you gonna do today?</h1>
+    <div>
+      <Form className="d-flex">
+        <FormControl
+          type="search"
+          placeholder="Search"
+          className="me-2"
+          aria-label="Search"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Button variant="outline-success" onClick={() => searchResult()}>Search</Button>
+      </Form>
       <Button onClick={(e) => { EnterRoom(e) }}>Click</Button>
       <span>Selected: {selected ? selected.title + selected.text + selected.price : "none"}</span>
       <Container>
         <Row>
           {/* {itemArray.map(item =>)} */}
           {
-            itemArray.map((item, index) => (
+            productsList.map((item, index) => (
               <ShoppingCard
                 img={item.img}
                 title={item.title}
@@ -181,19 +214,21 @@ function HomePage2() {
                 item={item}
                 setSelected={setSelected}
                 setHovered={setHovered}
-                addToTheCart={() => dispatch(addToCart({
-                  title: item.title,
-                  text: item.text,
-                  price: item.price,
-                }))}
+                addToTheCart={() => {
+                  // dispatch(addToCart({
+                  //   title: item.title,
+                  //   text: item.text,
+                  //   price: item.price,
+                  // }))
+                  addToTheCart(item);
+                }}
               />
             )
             )
           }
         </Row>
       </Container>
-      <button onClick={clickEvent()}>Click lol</button>
-    </>
+    </div>
   );
 }
 
