@@ -1,4 +1,4 @@
-const { Category } = require("../models")
+const { Category, Product } = require("../models")
 
 
 const getCategory = async (req, res) => {
@@ -7,6 +7,17 @@ const getCategory = async (req, res) => {
 }
 
 
+const listProduct = async (req, res) => {
+    if (!req.body.category) {
+        res.status(400).send("Invalid request")
+    } else {
+        let result = await Product.list(req.body.category)
+        res.send(result)
+    }
+}
+
+
 module.exports = {
-    getCategory
+    getCategory,
+    listProduct
 }
