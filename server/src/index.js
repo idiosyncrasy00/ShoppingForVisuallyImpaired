@@ -19,19 +19,19 @@ app.get("/", (req, res) => {
     res.send("Hello there")
 });
 
-// Database
+// Routes
+
+console.log("Setting routes ...")
+app.use("/api/products", require("./routes/product.route"));
+app.use("/api/category", require("./routes/category.route"));
+
+// Start project
 
 (async () => {
     console.log("Setting database ...")
     const db = require("./models");
     await db.connect_db()
+
+    app.listen(PORT, () => console.log(`Listening on port ${PORT} ...`))
 })();
 
-// Routes
-
-console.log("Setting routes ...")
-app.use("/api/products", require("./routes/product.route"));
-
-// Start project
-
-app.listen(PORT, () => console.log(`Listening on port ${PORT} ...`))
