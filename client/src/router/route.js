@@ -5,6 +5,7 @@ import Register from '../pages/RegisterPage'
 import Profile from '../pages/ProfilePage'
 import SearchPage from '../pages/SearchPage'
 import NotFound from '../pages/404NotFound'
+import CartPage from '../pages/CartPage';
 
 const routes = [
   {
@@ -19,17 +20,13 @@ const routes = [
     path: '/register',
     component: <Register />,
   },
+  // {
+  //   path: '/profile/:id',
+  //   component: <Profile />,
+  // },
   {
-    path: '/profile/:id',
-    component: <Profile />,
-  },
-  {
-    path: '/search',
-    component: <SearchPage />,
-  },
-  {
-    path: '/search?query=:query',
-    component: <SearchPage />,
+    path: '/cart',
+    component: <CartPage />,
   },
   {
     path: '*',
