@@ -2,7 +2,7 @@ const MongoClient = require("mongodb").MongoClient
 const path = require("path")
 
 require("dotenv").config({
-    path: path.resolve(__dirname, "../../.env")     // For development
+    path: path.resolve(__dirname, "../../.env.dev")     // For development
 })
 
 const DB_ENDPOINT = process.env.DB_ENDPOINT
