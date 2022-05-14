@@ -11,8 +11,10 @@ var voiceCallback = () => {}
 export function enable_keyevent() {
     document.onkeydown = e => {
         if (e.key == "ArrowUp") {
+            e.preventDefault()
             up()
         } else if (e.key == "ArrowDown") {
+            e.preventDefault()
             down()
         } else if (e.key == "f") {
             selectCallback(select())
@@ -29,6 +31,14 @@ export function enable_keyevent() {
 
 export function disable_keyevent() {
     document.onkeydown = e => {}
+}
+
+
+export function disable_callback() {
+    selectCallback = (index) => {}
+    returnCallback = () => {}
+    listenCallback = () => {}
+    voiceCallback = () => {}
 }
 
 
