@@ -12,24 +12,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
 app.use(cors({
-    origin: "http://localhost:3000"
+    origin: "*"
 }));
 
-app.get("/", (req, res) => {
-    res.send("Hello there")
-});
+app.use(express.static("public"))
+
+app.get("/hello", (req, res) => res.send("Hello there"));
 
 // Routes
 
 console.log("Setting routes ...")
-app.use("/api/products", require("./routes/product.route"));
-app.use("/api/category", require("./routes/category.route"));
+app.use("/api", require("./src/routes"));
 
 // Start project
 
 (async () => {
     console.log("Setting database ...")
-    const db = require("./models");
+    const db = require("./src/models");
     await db.connect_db()
 
     app.listen(PORT, () => console.log(`Listening on port ${PORT} ...`))

@@ -1,0 +1,15 @@
+.block {
+    width: 300px;
+    height: 100px;
+    background-color: blanchedalmond;
+    border: 1px solid #000;
+    padding: 30px;
+}
+
+.selected {
+    width: 300px;
+    height: 100px;
+    background-color: aqua;
+    border: 1px solid #000;
+    padding: 30px;
+}

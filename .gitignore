@@ -8,3 +8,7 @@ package-lock.json
 server/src/test.js
 
 server/src/models/_test.js
+
+server/test/
+
+*.csv
