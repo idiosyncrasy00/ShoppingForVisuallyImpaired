@@ -2,6 +2,8 @@
 const controlBlock = document.getElementById("controlBlock")
 const resultField = document.getElementById("result")
 
+import { playUp, playDown, playError } from "../sound.js"
+
 var blocks = []
 var numBlock = 0
 var selected = -1
@@ -48,14 +50,20 @@ export function show_result(result) {
 
 export function up() {
     if (selected > 0) {
+        playUp()
         updateSelected(selected - 1)
+    } else {
+        playError()
     }
 }
 
 
 export function down() {
     if (selected < numBlock - 1) {
+        playDown()
         updateSelected(selected + 1)
+    } else {
+        playError()
     }
 }
 
