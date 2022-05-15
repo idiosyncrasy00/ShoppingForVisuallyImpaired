@@ -2,6 +2,7 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const cors = require("cors")
 const helmet = require("helmet")
+const socket = require("socket.io")
 
 
 const PORT = 8000
@@ -31,6 +32,15 @@ app.use("/api", require("./src/routes"));
     const db = require("./src/models");
     await db.connect_db()
 
-    app.listen(PORT, () => console.log(`Listening on port ${PORT} ...`))
+    const server = app.listen(PORT, () => console.log(`Listening on port ${PORT} ...`))
+
+    const io = socket(server, {
+        cors: {
+            origin: `http://localhost:${PORT}`
+        }
+    })
+
+    require("./src/utils/socket")(io);
+
 })();
 
