@@ -1,6 +1,5 @@
 
 const controlBlock = document.getElementById("controlBlock")
-const resultField = document.getElementById("result")
 
 import { playUp, playDown, playError, playVoices } from "../sound/sound.js"
 
@@ -33,7 +32,6 @@ function updateSelected(value) {
 
 export function spawnBlock(blockDatas) {
     controlBlock.innerHTML = ""
-    resultField.style.display = "none"
     blocks = []
     for (var i = 0; i < blockDatas.length; i++) {
         let block = {
@@ -47,12 +45,6 @@ export function spawnBlock(blockDatas) {
     }
     selected = -1
     updateSelected(0)
-}
-
-
-export function show_result(result) {
-    resultField.style.display = "block"
-    resultField.innerHTML = result
 }
 
 
