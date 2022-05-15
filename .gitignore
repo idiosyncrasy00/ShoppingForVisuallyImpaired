@@ -12,3 +12,5 @@ server/src/models/_test.js
 server/test/
 
 *.csv
+
+server/public/tts/*.wav
