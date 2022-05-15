@@ -1,5 +1,6 @@
 
-import { up, down, select } from "./block.js";
+import { up, down, getSelectedIndex } from "./block.js";
+import { playError } from "../sound/sound.js";
 
 
 var selectCallback = (index) => {}
@@ -17,13 +18,15 @@ export function enable_keyevent() {
             e.preventDefault()
             down()
         } else if (e.key == "f") {
-            selectCallback(select())
+            selectCallback(getSelectedIndex())
         } else if (e.key == "g") {
             returnCallback()
         } else if (e.key == "h") {
             listenCallback()
         } else if (e.key == "j") {
             voiceCallback()
+        } else {
+            playError()
         }
     }
 }

@@ -2,42 +2,50 @@
 const controlBlock = document.getElementById("controlBlock")
 const resultField = document.getElementById("result")
 
-import { playUp, playDown, playError } from "../sound.js"
+import { playUp, playDown, playError, playVoices } from "../sound/sound.js"
 
-var blocks = []
-var numBlock = 0
+var blocks = []     // [ { html: ..., data: ... } ]
 var selected = -1
 
 
 function updateSelected(value) {
     if (selected != -1) {
-        blocks[selected].className = "block"
+        blocks[selected].html.className = "block"
     }
-    blocks[value].className = "selected"
-    blocks[value].scrollIntoView({
+    blocks[value].html.className = "selected"
+    blocks[value].html.scrollIntoView({
         block: "center",
         behavior: "smooth"
     })
     selected = value
+    playVoices(blocks[value].data.voices)
 }
 
+/*  blockData:
+{
+    data: "name",
+    voices: [
+        { id: "123", text: "1244" }
+    ]
+}
+*/
 
-export function spawnBlock(number, datas=[]) {
-    numBlock = number
-    var numData = datas.length
+
+export function spawnBlock(blockDatas) {
     controlBlock.innerHTML = ""
     resultField.style.display = "none"
     blocks = []
-    selected = 0
-    for (var i = 0; i < numBlock; i++) {
-        var block = document.createElement("div")
-        block.className = "block"
-        if (i < numData) {
-            block.innerHTML = `${datas[i]}`
+    for (var i = 0; i < blockDatas.length; i++) {
+        let block = {
+            html: document.createElement("div"),
+            data: blockDatas[i]
         }
-        controlBlock.appendChild(block)
+        block.html.className = "block"
+        block.html.innerHTML = blockDatas[i].data
+        controlBlock.appendChild(block.html)
         blocks.push(block)
     }
+    selected = -1
     updateSelected(0)
 }
 
@@ -59,7 +67,7 @@ export function up() {
 
 
 export function down() {
-    if (selected < numBlock - 1) {
+    if (selected < blocks.length - 1) {
         playDown()
         updateSelected(selected + 1)
     } else {
@@ -68,6 +76,6 @@ export function down() {
 }
 
 
-export function select() {
+export function getSelectedIndex() {
     return selected
 }
