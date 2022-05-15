@@ -10,6 +10,8 @@ import {
 
 import { spawnBlock, getSelectedIndex } from "../view/block.js"
 
+const titleField = document.getElementById("title")
+
 
 /*  blockData:
 {
@@ -23,7 +25,7 @@ import { spawnBlock, getSelectedIndex } from "../view/block.js"
 
 export class Menu {
     constructor() {
-        this.title = ""
+        this.title = "Title"
         this.datas = []
         this.blockDatas = []
         this.blacklistFields = ["_id", "voiceline", "date"]
@@ -33,25 +35,27 @@ export class Menu {
         this.on_return = async () => { }
     }
 
-    async build(prev_data, reset_data=true) {
-        if (reset_data) {
-            this.reset()
-            this.prev_data = prev_data
-            disable_callback()
-            disable_keyevent()
-            await this.init()
-            spawnBlock(this.blockDatas)
-            setSelectCallback(async () => await this.on_select(getSelectedIndex()))
-            setReturnCallback(this.on_return)
-            enable_keyevent()
-        } else {
-            disable_callback()
-            disable_keyevent()
-            spawnBlock(this.blockDatas)
-            setSelectCallback(async () => await this.on_select(getSelectedIndex()))
-            setReturnCallback(this.on_return)
-            enable_keyevent()
-        }
+    async build(prev_data) {
+        this.reset()
+        this.prev_data = prev_data
+        disable_callback()
+        disable_keyevent()
+        await this.init()
+        spawnBlock(this.blockDatas)
+        setSelectCallback(async () => await this.on_select(getSelectedIndex()))
+        setReturnCallback(this.on_return)
+        titleField.innerHTML = this.title
+        enable_keyevent()
+    }
+
+    async back() {
+        disable_callback()
+        disable_keyevent()
+        spawnBlock(this.blockDatas)
+        setSelectCallback(async () => await this.on_select(getSelectedIndex()))
+        setReturnCallback(this.on_return)
+        titleField.innerHTML = this.title
+        enable_keyevent()
     }
 
     // Private
