@@ -1,94 +1,85 @@
 
-import { show_data, setDataSelected } from "./view/control.js"
-import {
-    enable_keyevent, 
-    disable_keyevent, 
-    disable_callback,
-    setReturnCallback
-} from "./view/key.js"
-import { show_result } from "./view/block.js"
-import { request } from "./axios.js"
+import { Menu } from "./menu/menu.js";
+import { request } from "./util/axios.js"
 
 
-var products_list = []
+const categoryMenu = new Menu()
+const productsMenu = new Menu()
+const confirmMenu = new Menu()
+const receiptMenu = new Menu()
 
-export async function show_products_list(retrieveCallback) {
-    disable_callback()
-    disable_keyevent()
-    var datas = products_list
-    if (retrieveCallback != null) {
-        datas = await retrieveCallback()
-        products_list = datas
+
+categoryMenu.init = async () => {
+    categoryMenu.datas = await request("get", "/api/category/get")
+    let str_datas = categoryMenu.dataToString()
+    for (const str of str_datas) {
+        categoryMenu.blockDatas.push({
+            data: str,
+            voices: []
+        })
     }
-    // catch error
-    show_data(datas)
-    setDataSelected(async (index, value) => {
-        await show_selected_product(value)
-    })
-    setReturnCallback(async () => {
-        await show_category()
-    })
-    enable_keyevent()
+}
+categoryMenu.on_select = async (index) => {
+    let category = categoryMenu.datas[index].category
+    productsMenu.build(category)
 }
 
 
-// ------------
-
-
-export async function show_category() {
-    disable_callback()
-    disable_keyevent()
-    var datas = await request("get", "/api/category/get")
-    // catch error
-    show_data(datas)
-    setDataSelected(async (index, value) => {
-        await show_products_in_category(value.category)
-    })
-    enable_keyevent()
+productsMenu.init = async () => {
+    let category = productsMenu.prev_data
+    productsMenu.datas = await request("post", "/api/category/list", { category })
+    let str_datas = productsMenu.dataToString()
+    for (const str of str_datas) {
+        productsMenu.blockDatas.push({
+            data: str,
+            voices: []
+        })
+    }
+}
+productsMenu.on_select = async (index) => {
+    let product = productsMenu.datas[index]
+    confirmMenu.build(product)
+}
+productsMenu.on_return = async () => {
+    categoryMenu.build()
 }
 
 
-export async function show_products_in_category(category) {
-    await show_products_list(async () => {
-        return await request("post", "/api/category/list", { category })
-    })
+confirmMenu.init = async () => {
+    confirmMenu.blockDatas = [
+        { data: "Buy", voices: [] },
+        { data: "Cancel", voices: [] }
+    ]
+}
+confirmMenu.on_select = async (index) => {
+    let product = confirmMenu.prev_data
+    if (index == 0) {
+        receiptMenu.build(product)
+    } else {
+        productsMenu.build(null, false)
+    }
+}
+confirmMenu.on_return = async () => {
+    productsMenu.build(null, false)
 }
 
 
-export async function show_selected_product(product) {
-    disable_callback()
-    disable_keyevent()
-    show_data(["Buy", "Return"], false)
-    setDataSelected(async (index, value) => {
-        if (index == 0) {
-            await request("post", "/api/products/buy", product)
-            // catch error
-            await show_success_menu(product)
-        } else {
-            await show_products_list()
-        }
-    })
-    setReturnCallback(async () => {
-        await show_products_list()
-    })
-    enable_keyevent()
+receiptMenu.init = async () => {
+    let product = receiptMenu.prev_data
+    await request("post", "/api/products/buy", product)
+    receiptMenu.blockDatas = [
+        { data: "Return", voices: [] }
+    ]
+}
+receiptMenu.on_select = async (index) => {
+    categoryMenu.build()
+}
+receiptMenu.on_return = async () => {
+    categoryMenu.build()
 }
 
 
-export async function show_success_menu(product) {
-    disable_callback()
-    disable_keyevent()
-    show_data(["Return"], false)
-    show_result(`Buy "${product.name}" successfully`)
-    setDataSelected(async (index, value) => {
-        products_list = []
-        await show_category()
-    })
-    setReturnCallback(async () => {
-        products_list = []
-        await show_category()
-    })
-    enable_keyevent()
+
+export function mainmenu() {
+    categoryMenu.build()
 }
-
-
