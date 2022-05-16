@@ -68,3 +68,10 @@ export async function playVoices(voices) { // [ {id, text} ]
         }
     }
 }
+
+
+export async function stopVoices() {
+    for (const audio of audios) {
+        audio.pause()
+    }
+}

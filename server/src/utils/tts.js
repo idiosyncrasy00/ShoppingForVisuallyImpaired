@@ -1,5 +1,8 @@
+const path = require("path")
 
-require("dotenv").config()
+require("dotenv").config({
+    path: path.resolve(__dirname, "../../.env.dev")     // For development
+})
 
 const { SpeechSynthesizer, AudioConfig, SpeechConfig } = require("microsoft-cognitiveservices-speech-sdk")
 const fs = require("fs")

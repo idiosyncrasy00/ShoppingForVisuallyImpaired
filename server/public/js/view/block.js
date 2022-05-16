@@ -1,50 +1,41 @@
 
 const controlBlock = document.getElementById("controlBlock")
 
-import { playUp, playDown, playError, playVoices } from "../sound/sound.js"
+import { playUp, playDown, playError } from "../sound/sound.js"
 
-var blocks = []     // [ { html: ..., data: ... } ]
+var blocks = []
 var selected = -1
+var focusCallback = null
 
 
-function updateSelected(value) {
+function updateSelected(value, first=false) {
     if (selected != -1) {
-        blocks[selected].html.className = "block"
+        blocks[selected].className = "block"
     }
-    blocks[value].html.className = "selected"
-    blocks[value].html.scrollIntoView({
+    blocks[value].className = "selected"
+    blocks[value].scrollIntoView({
         block: "center",
         behavior: "smooth"
     })
     selected = value
-    playVoices(blocks[value].data.voices)
+    if (focusCallback != null) {
+        focusCallback(value, first)
+    }
 }
 
-/*  blockData:
-{
-    data: "name",
-    voices: [
-        { id: "123", text: "1244" }
-    ]
-}
-*/
 
-
-export function spawnBlock(blockDatas) {
+export function spawnBlock(block_data) {    // [ "123", "456" ]
     controlBlock.innerHTML = ""
     blocks = []
-    for (var i = 0; i < blockDatas.length; i++) {
-        let block = {
-            html: document.createElement("div"),
-            data: blockDatas[i]
-        }
-        block.html.className = "block"
-        block.html.innerHTML = blockDatas[i].data
-        controlBlock.appendChild(block.html)
+    for (var i = 0; i < block_data.length; i++) {
+        let block = document.createElement("div")
+        block.className = "block"
+        block.innerHTML = block_data[i]
+        controlBlock.appendChild(block)
         blocks.push(block)
     }
     selected = -1
-    updateSelected(0)
+    updateSelected(0, true)
 }
 
 
@@ -70,4 +61,9 @@ export function down() {
 
 export function getSelectedIndex() {
     return selected
+}
+
+
+export function setFocusCallback(callback) {
+    focusCallback = callback
 }

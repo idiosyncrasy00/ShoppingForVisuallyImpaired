@@ -9,24 +9,33 @@ var listenCallback = () => {}
 var voiceCallback = () => {}
 
 
+var key_delay = 500
+var key_ready = true
+
+
 export function enable_keyevent() {
     document.onkeydown = e => {
-        if (e.key == "ArrowUp") {
-            e.preventDefault()
-            up()
-        } else if (e.key == "ArrowDown") {
-            e.preventDefault()
-            down()
-        } else if (e.key == "f") {
-            selectCallback(getSelectedIndex())
-        } else if (e.key == "g") {
-            returnCallback()
-        } else if (e.key == "h") {
-            listenCallback()
-        } else if (e.key == "j") {
-            voiceCallback()
-        } else {
-            playError()
+        if (key_ready) {
+            key_ready = false
+            setTimeout(() => key_ready = true, key_delay)
+            // Case
+            if (e.key == "ArrowUp") {
+                e.preventDefault()
+                up()
+            } else if (e.key == "ArrowDown") {
+                e.preventDefault()
+                down()
+            } else if (e.key == "f") {
+                selectCallback(getSelectedIndex())
+            } else if (e.key == "g") {
+                returnCallback()
+            } else if (e.key == "h") {
+                listenCallback()
+            } else if (e.key == "j") {
+                voiceCallback()
+            } else {
+                playError()
+            }
         }
     }
 }
