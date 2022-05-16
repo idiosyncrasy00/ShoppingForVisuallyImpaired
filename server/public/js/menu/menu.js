@@ -5,10 +5,13 @@ import {
     disable_keyevent,
     enable_keyevent,
     setReturnCallback,
-    setSelectCallback
+    setSelectCallback,
+    setListenCallback
 } from "../view/key.js"
 
-import { spawnBlock, getSelectedIndex } from "../view/block.js"
+import { spawnBlock, getSelectedIndex, setFocusCallback } from "../view/block.js"
+
+import { playVoices, stopVoices } from "../sound/sound.js"
 
 const titleField = document.getElementById("title")
 
@@ -27,43 +30,68 @@ export class Menu {
     constructor() {
         this.title = "Title"
         this.datas = []
-        this.blockDatas = []
+        this.block_data = []
+        this.voice_data = []
+        this.voice_init = null
         this.blacklistFields = ["_id", "voiceline", "date"]
         this.prev_data = null
-        this.init = async () => {}  // build datas and blockDatas
+        this.init = async () => {}  // update block_data and voice_data
         this.on_select = async (index) => { }
         this.on_return = async () => { }
     }
 
-    async build(prev_data) {
+    async start(prev_data) {
         this.reset()
         this.prev_data = prev_data
-        disable_callback()
-        disable_keyevent()
+        this.before_build()
         await this.init()
-        spawnBlock(this.blockDatas)
-        setSelectCallback(async () => await this.on_select(getSelectedIndex()))
-        setReturnCallback(this.on_return)
-        titleField.innerHTML = this.title
-        enable_keyevent()
+        this.build()
     }
 
     async back() {
-        disable_callback()
-        disable_keyevent()
-        spawnBlock(this.blockDatas)
-        setSelectCallback(async () => await this.on_select(getSelectedIndex()))
-        setReturnCallback(this.on_return)
-        titleField.innerHTML = this.title
-        enable_keyevent()
+        this.before_build()
+        this.build()
     }
 
     // Private
 
+    before_build() {
+        disable_callback()
+        disable_keyevent()
+    }
+
+    build() {
+        setFocusCallback((index, first) => {
+            let voices = []
+            if (first && this.voice_init) {
+                voices.push(this.voice_init)
+            }
+            let voice = this.voice_data[index]
+            if (voice != null) {
+                for (const v of voice) {
+                    voices.push(v)
+                }
+            }
+            if (voices.length > 0) {
+                playVoices(voices)
+            }
+        })
+        stopVoices()
+        spawnBlock(this.block_data)
+        setSelectCallback(async () => await this.on_select(getSelectedIndex()))
+        setReturnCallback(this.on_return)
+        setListenCallback(() => {
+            playVoices(this.voice_data[getSelectedIndex()])
+        })
+        titleField.innerHTML = this.title
+        enable_keyevent()
+    }
+
     reset() {
         this.title = ""
         this.datas = []
-        this.blockDatas = []
+        this.block_data = []
+        this.voice_data = []
         this.blacklistFields = ["_id", "voiceline", "date"]
         this.prev_data = null
     }

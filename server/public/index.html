@@ -3,15 +3,14 @@
     <head>
         <title>Shopping For Visually Impaired</title>
         <link rel="stylesheet" href="./css/style.css">
-        <script src="./script/axios.min.js"></script>
-        <script src="./script/underscore-min.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
     </head>
 
     <body>
-        <div id="title""></div>
-        <br>
-        <div id="controlBlock"></div>
-        <script type="module" src="./js/index.js"></script>
+        <div id="ready">Press any key to continue ...</div>
+        <script>
+            document.onkeydown = () => {
+                window.location.href = "shopping.html"
+            }
+        </script>
     </body>
 </html>
