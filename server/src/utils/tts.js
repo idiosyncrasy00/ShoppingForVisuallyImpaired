@@ -7,6 +7,7 @@ require("dotenv").config({
 const { SpeechSynthesizer, AudioConfig, SpeechConfig } = require("microsoft-cognitiveservices-speech-sdk")
 const fs = require("fs")
 const speechConfig = SpeechConfig.fromSubscription(process.env.TTS_TOKEN, process.env.TTS_REGION)
+speechConfig.speechSynthesisLanguage = "vi-VN"
 
 
 async function speak(id, text) {

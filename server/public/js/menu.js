@@ -10,13 +10,13 @@ const receiptMenu = new Menu()
 
 
 categoryMenu.init = async () => {
-    categoryMenu.title = "Category"
+    categoryMenu.title = "Danh mục"
     categoryMenu.datas = await request("get", "/api/category/get")
     categoryMenu.block_data = categoryMenu.dataToString()
     for (var i = 0; i < categoryMenu.datas.length; i++) {
         categoryMenu.voice_data.push([{
             id: `category${i + 1}`,
-            text: `category ${i + 1}`
+            text: `danh mục ${i + 1}`
         }, {
             id: `category_${categoryMenu.datas[i]._id}`,
             text: categoryMenu.datas[i].category
@@ -24,7 +24,7 @@ categoryMenu.init = async () => {
     }
     categoryMenu.voice_init = {
         id: "category_init",
-        text: "here is the list of categories"
+        text: "dưới đây là danh sách các danh mục sản phẩm"
     }
 }
 categoryMenu.on_select = async (index) => {
@@ -35,13 +35,13 @@ categoryMenu.on_select = async (index) => {
 
 productsMenu.init = async () => {
     let category = productsMenu.prev_data
-    productsMenu.title = `Products in ${category}`
+    productsMenu.title = `Sản phẩm trong ${category}`
     productsMenu.datas = await request("post", "/api/category/list", { category })
     productsMenu.block_data = productsMenu.dataToString()
     for (var i = 0; i < productsMenu.datas.length; i++) {
         productsMenu.voice_data.push([{
             id: `product${i + 1}`,
-            text: `product ${i + 1}`
+            text: `sản phẩm ${i + 1}`
         }, {
             id: `product_${productsMenu.datas[i]._id}`,
             text: productsMenu.datas[i].voiceline
@@ -49,7 +49,7 @@ productsMenu.init = async () => {
     }
     productsMenu.voice_init = {
         id: `product_init_${category}`,
-        text: `here is the list of products in ${category}`
+        text: `dưới đây là danh sách sản phẩm trong danh mục ${category}`
     }
 }
 productsMenu.on_select = async (index) => {
@@ -63,20 +63,20 @@ productsMenu.on_return = async () => {
 
 confirmMenu.init = async () => {
     let product = confirmMenu.prev_data
-    confirmMenu.title = `Confirm buying ${product.name} ?`
-    confirmMenu.block_data = [ "Buy", "Cancel" ]
+    confirmMenu.title = `Xác nhận mua ${product.name} ?`
+    confirmMenu.block_data = [ "Mua", "Hủy" ]
     confirmMenu.voice_data = [
         [{
             id: "confirm_buy",
-            text: "option 1 . buy"
+            text: "lựa chọn 1 . mua"
         }], [{
             id: "confirm_cancel",
-            text: "option 2 . cancel"
+            text: "lựa chọn 2 . hủy"
         }]
     ]
     confirmMenu.voice_init = {
         id: `confirm_${product._id}`,
-        text: `do you want to buy ${product.name}`
+        text: `bạn có muốn mua ${product.name} không`
     }
 }
 confirmMenu.on_select = async (index) => {
@@ -95,11 +95,11 @@ confirmMenu.on_return = async () => {
 receiptMenu.init = async () => {
     let product = receiptMenu.prev_data
     await request("post", "/api/products/buy", product)
-    receiptMenu.title = `${product.name} bought !`
-    receiptMenu.block_data = [ "Return" ]
+    receiptMenu.title = `Mua thành công ${product.name} !`
+    receiptMenu.block_data = [ "Quay lại" ]
     receiptMenu.voice_init = {
         id: `receipt_${product._id}`,
-        text: `thank you for buying ${product.name}`
+        text: `mua thành công ${product.name}`
     }
 }
 receiptMenu.on_select = async (index) => {
