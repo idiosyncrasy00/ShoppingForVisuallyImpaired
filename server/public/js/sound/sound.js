@@ -4,6 +4,7 @@ import { generate_audio } from "../util/socket.js"
 var upAudio = new Audio("../../sound/up.wav")
 var downAudio = new Audio("../../sound/down.wav")
 var errorAudio = new Audio("../../sound/error.mp3")
+var interactAudio = new Audio("../../sound/button_interact.mp3")
 var ttsPath = "../../tts/"
 
 
@@ -24,6 +25,11 @@ export function playDown() {
 
 export function playError() {
     errorAudio.play()
+}
+
+
+export function playInteract() {
+    interactAudio.play()
 }
 
 

@@ -11,7 +11,7 @@ import {
 
 import { spawnBlock, getSelectedIndex, setFocusCallback } from "../view/block.js"
 
-import { playVoices, stopVoices } from "../sound/sound.js"
+import { playVoices, stopVoices, playInteract } from "../sound/sound.js"
 
 const titleField = document.getElementById("title")
 
@@ -78,8 +78,14 @@ export class Menu {
         })
         stopVoices()
         spawnBlock(this.block_data)
-        setSelectCallback(async () => await this.on_select(getSelectedIndex()))
-        setReturnCallback(this.on_return)
+        setSelectCallback(async () => {
+            playInteract()
+            await this.on_select(getSelectedIndex())
+        })
+        setReturnCallback(async () => {
+            playInteract()
+            await this.on_return()
+        })
         setListenCallback(() => {
             playVoices(this.voice_data[getSelectedIndex()])
         })

@@ -10,7 +10,7 @@ module.exports = {
                     description: description,
                     price: price,
                     date: new Date(),
-                    voiceline: `name. ${name}. category. ${category}. price. ${price}. description. ${description}.`
+                    voiceline: `tên sản phẩm. ${name}. danh mục. ${category}. giá sản phẩm. ${price} đồng. chi tiết. ${description}.`
                 })
             },
             get: async () => {
