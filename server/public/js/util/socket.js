@@ -10,3 +10,13 @@ export async function generate_audio(id, text) {
     })
 }
 
+
+export async function speech_to_text(chunks) {
+    return await new Promise(res => {
+        socket.emit("stt", chunks, (result) => {
+            console.log(result)
+            res(result)
+        })
+    })
+}
+
