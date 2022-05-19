@@ -2,6 +2,7 @@
 import { categoryMenu, productsMenu } from "./list.js";
 import { request } from "../util/axios.js"
 import { playInteract, playVoices } from "../sound/sound.js"
+import { getSelectedIndex } from "../view/block.js";
 
 
 categoryMenu.init = async () => {
@@ -24,7 +25,7 @@ categoryMenu.init = async () => {
 }
 
 categoryMenu.on_select = async (index) => {
-    let category = categoryMenu.datas[index].category
+    let category = categoryMenu.datas[index]
     productsMenu.start(category)
 }
 
@@ -42,11 +43,30 @@ categoryMenu.on_voice = async (voice) => {
         if (index != NaN) {
             if (index > 0 && index <= categoryMenu.datas.length) {
                 playInteract()
-                let category = categoryMenu.datas[index - 1].category
+                let category = categoryMenu.datas[index - 1]
                 productsMenu.start(category)
             }
         }
     }
+}
+
+categoryMenu.on_listen = async () => {
+    let voices = [{
+        id: "guide_category_1",
+        text: "bạn đang ở màn hình danh mục. danh mục bạn đang lựa chọn là"
+    }]
+    for (const v of categoryMenu.voice_data[getSelectedIndex()]) {
+        voices.push(v)
+    }
+    voices.push({
+        id: "guide_category_2",
+        text: "ấn phím lên hoặc xuống để di chuyển giữa các danh mục. ấn phím đầu tiên để chọn danh mục."
+    })
+    voices.push({
+        id: "guide_34",
+        text: "ấn phím thứ ba để nghe hướng dẫn. ấn phím thứ tư để dùng giọng nói"
+    })
+    playVoices(voices)
 }
 
 

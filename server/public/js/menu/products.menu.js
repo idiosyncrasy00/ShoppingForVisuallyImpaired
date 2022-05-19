@@ -2,12 +2,13 @@
 import { categoryMenu, productsMenu, confirmMenu } from "./list.js";
 import { request } from "../util/axios.js"
 import { playInteract, playVoices } from "../sound/sound.js"
+import { getSelectedIndex } from "../view/block.js";
 
 
 productsMenu.init = async () => {
     let category = productsMenu.prev_data
-    productsMenu.title = `Sản phẩm trong ${category}`
-    productsMenu.datas = await request("post", "/api/category/list", { category })
+    productsMenu.title = `Sản phẩm trong ${category.category}`
+    productsMenu.datas = await request("post", "/api/category/list", { category: category.category })
     productsMenu.block_data = productsMenu.dataToString()
     for (var i = 0; i < productsMenu.datas.length; i++) {
         productsMenu.voice_data.push([{
@@ -19,8 +20,8 @@ productsMenu.init = async () => {
         }])
     }
     productsMenu.voice_init = {
-        id: `product_init_${category}`,
-        text: `dưới đây là danh sách sản phẩm trong danh mục ${category}`
+        id: `product_init_${category._id}`,
+        text: `dưới đây là danh sách sản phẩm trong danh mục ${category.category}`
     }
 }
 
@@ -56,6 +57,26 @@ productsMenu.on_voice = async (voice) => {
             }
         }
     }
+}
+
+productsMenu.on_listen = async () => {
+    let category = productsMenu.prev_data
+    let voices = [{
+        id: `guide_product_${category._id}`,
+        text: `bạn đang ở màn hình các sản phẩm trong danh mục ${category.category}. sản phẩm bạn đang lựa chọn là`
+    }]
+    for (const v of productsMenu.voice_data[getSelectedIndex()]) {
+        voices.push(v)
+    }
+    voices.push({
+        id: "guide_product_1",
+        text: "ấn phím lên hoặc xuống để di chuyển giữa các sản phẩm. ấn phím đầu tiên để chọn sản phẩm. ấn phím thứ hai để quay lại màn hình các danh mục"
+    })
+    voices.push({
+        id: "guide_34",
+        text: "ấn phím thứ ba để nghe hướng dẫn. ấn phím thứ tư để dùng giọng nói"
+    })
+    playVoices(voices)
 }
 
 

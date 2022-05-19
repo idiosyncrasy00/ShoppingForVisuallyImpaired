@@ -1,7 +1,8 @@
 
 import { productsMenu, confirmMenu, receiptMenu } from "./list.js";
 import { request } from "../util/axios.js"
-import { playInteract } from "../sound/sound.js";
+import { playInteract, playVoices } from "../sound/sound.js";
+import { getSelectedIndex } from "../view/block.js";
 
 
 confirmMenu.init = async () => {
@@ -63,6 +64,26 @@ confirmMenu.on_voice = async (voice) => {
         playInteract()
         productsMenu.back()
     }
+}
+
+confirmMenu.on_listen = async () => {
+    let product = confirmMenu.prev_data
+    let voices = [{
+        id: `guide_confirm_${product._id}`,
+        text: `bạn đang ở màn hình xác nhận mua sản phẩm ${product.name}. tùy chọn bạn đang lựa chọn là`
+    }]
+    for (const v of confirmMenu.voice_data[getSelectedIndex()]) {
+        voices.push(v)
+    }
+    voices.push({
+        id: "guide_confirm_1",
+        text: "ấn phím lên hoặc xuống để di chuyển giữa các tùy chọn mua hoặc hủy. ấn phím đầu tiên để chọn tùy chọn. ấn phím thứ hai để quay lại màn hình các sản phẩm"
+    })
+    voices.push({
+        id: "guide_34",
+        text: "ấn phím thứ ba để nghe hướng dẫn. ấn phím thứ tư để dùng giọng nói"
+    })
+    playVoices(voices)
 }
 
 

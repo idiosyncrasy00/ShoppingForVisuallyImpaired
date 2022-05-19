@@ -41,6 +41,7 @@ export class Menu {
         this.on_select = async (index) => {}
         this.on_return = async () => {}
         this.on_voice = async (voice) => {}
+        this.on_listen = async () => {}
         this.is_recording = false
     }
 
@@ -100,7 +101,7 @@ export class Menu {
         })
         setListenCallback(async () => {
             playInteract()
-            playVoices(this.voice_data[getSelectedIndex()])
+            await this.on_listen()
         })
         setVoiceCallback(async () => {
             if (!this.is_recording) {
