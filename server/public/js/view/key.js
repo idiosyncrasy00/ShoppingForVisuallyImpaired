@@ -15,14 +15,15 @@ var key_ready = true
 
 export function enable_keyevent() {
     document.onkeydown = async (e) => {
-        e.preventDefault()
         if (key_ready) {
             key_ready = false
             setTimeout(() => key_ready = true, key_delay)
             // Case
             if (e.key == "ArrowUp") {
+                e.preventDefault()
                 up()
             } else if (e.key == "ArrowDown") {
+                e.preventDefault()
                 down()
             } else if (e.key == "f") {
                 await selectCallback(getSelectedIndex())
@@ -41,9 +42,7 @@ export function enable_keyevent() {
 
 
 export function disable_keyevent() {
-    document.onkeydown = e => {
-        e.preventDefault()
-    }
+    document.onkeydown = e => { }
 }
 
 

@@ -1,6 +1,7 @@
 
 import { categoryMenu, productsMenu } from "./list.js";
 import { request } from "../util/axios.js"
+import { playInteract, playVoices } from "../sound/sound.js"
 
 
 categoryMenu.init = async () => {
@@ -25,6 +26,27 @@ categoryMenu.init = async () => {
 categoryMenu.on_select = async (index) => {
     let category = categoryMenu.datas[index].category
     productsMenu.start(category)
+}
+
+categoryMenu.on_voice = async (voice) => {
+    let text = voice.text
+    let num = voice.num
+    if (text.includes("chọn")) {
+        // Choose category
+        let index = parseInt(num, 10)
+        if (text.includes("đầu") || text.includes("nhất")) {
+            index = 1
+        } else if (text.includes("cuối")) {
+            index = categoryMenu.datas.length
+        }
+        if (index != NaN) {
+            if (index > 0 && index <= categoryMenu.datas.length) {
+                playInteract()
+                let category = categoryMenu.datas[index - 1].category
+                productsMenu.start(category)
+            }
+        }
+    }
 }
 
 

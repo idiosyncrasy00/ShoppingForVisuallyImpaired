@@ -1,6 +1,7 @@
 
 import { categoryMenu, receiptMenu } from "./list.js";
 import { request } from "../util/axios.js"
+import { playInteract } from "../sound/sound.js";
 
 
 receiptMenu.init = async () => {
@@ -20,6 +21,15 @@ receiptMenu.on_select = async (index) => {
 
 receiptMenu.on_return = async () => {
     categoryMenu.back()
+}
+
+receiptMenu.on_voice = async (voice) => {
+    let text = voice.text
+    if (text.includes("quay lại")) {
+        // Return main menu
+        playInteract()
+        categoryMenu.back()
+    }
 }
 
 
