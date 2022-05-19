@@ -7,7 +7,8 @@ import {
     setReturnCallback,
     setSelectCallback,
     setListenCallback,
-    setVoiceCallback
+    setVoiceCallback,
+    start_record_mode
 } from "../../view/key.js"
 import { spawnBlock, getSelectedIndex, setFocusCallback } from "../../view/block.js"
 import { playVoices, stopVoices, playInteract } from "../../sound/sound.js"
@@ -66,13 +67,21 @@ export class Menu {
     build() {
         setFocusCallback((index, first) => {
             let voices = []
-            if (first && this.voice_init) {
-                voices.push(this.voice_init)
-            }
-            let voice = this.voice_data[index]
-            if (voice != null) {
-                for (const v of voice) {
-                    voices.push(v)
+            if (first) {
+                if (this.voice_init) {
+                    voices.unshift(this.voice_init)
+                }
+                for (const voice of this.voice_data) {
+                    for (const v of voice) {
+                        voices.push(v)
+                    }
+                }
+            } else {
+                let voice = this.voice_data[index]
+                if (voice != null) {
+                    for (const v of voice) {
+                        voices.push(v)
+                    }
                 }
             }
             if (voices.length > 0) {
@@ -116,6 +125,7 @@ export class Menu {
     async startRecord() {
         this.is_recording = true
         playInteract()
+        start_record_mode()
         playVoices([{
             id: "voice_command",
             text: "hãy nói sau tiếng bíp"
@@ -133,6 +143,7 @@ export class Menu {
     async stopRecord() {
         this.is_recording = false
         playInteract()
+        enable_keyevent()
         playVoices([{
             id: "voice_execute",
             text: "đang xử lý tiếng nói"
