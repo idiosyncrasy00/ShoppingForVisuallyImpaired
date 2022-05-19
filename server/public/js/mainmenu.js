@@ -1,4 +1,7 @@
 
 document.onkeydown = () => {
-    window.location.href = "shopping.html"
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then((stream) => {
+            window.location.href = "shopping.html"
+        })
 }
