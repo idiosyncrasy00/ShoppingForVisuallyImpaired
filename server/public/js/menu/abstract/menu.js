@@ -8,11 +8,11 @@ import {
     setSelectCallback,
     setListenCallback,
     setVoiceCallback
-} from "../view/key.js"
-import { spawnBlock, getSelectedIndex, setFocusCallback } from "../view/block.js"
-import { playVoices, stopVoices, playInteract } from "../sound/sound.js"
-import { startRecord, stopRecord } from "../sound/record.js";
-import { speech_to_text } from "../util/socket.js";
+} from "../../view/key.js"
+import { spawnBlock, getSelectedIndex, setFocusCallback } from "../../view/block.js"
+import { playVoices, stopVoices, playInteract } from "../../sound/sound.js"
+import { startRecord, stopRecord } from "../../sound/record.js";
+import { speech_to_text } from "../../util/socket.js";
 
 const titleField = document.getElementById("title")
 

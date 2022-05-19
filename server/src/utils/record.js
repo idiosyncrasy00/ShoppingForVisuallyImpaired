@@ -65,7 +65,4 @@ async function read(blob) {
 }
 
 
-// (async () => console.log(await speechToText("test/record.wav")))();
-
-
 module.exports = { read }
