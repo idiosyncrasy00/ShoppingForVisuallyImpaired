@@ -1,7 +1,7 @@
 
 import { productsMenu, confirmMenu, receiptMenu } from "./list.js";
 import { request } from "../util/axios.js"
-import { playInteract, playVoices } from "../sound/sound.js";
+import { playInteract, playVoices, playError } from "../sound/sound.js";
 import { getSelectedIndex } from "../view/block.js";
 
 
@@ -38,6 +38,7 @@ confirmMenu.on_return = async () => {
 }
 
 confirmMenu.on_voice = async (voice) => {
+    let executed = false
     let text = voice.text
     let num = voice.num
     let product = confirmMenu.prev_data
@@ -45,24 +46,36 @@ confirmMenu.on_voice = async (voice) => {
         // Return
         playInteract()
         productsMenu.back()
+        executed = true
     } else if (text.includes("chọn")) {
         // Choose
         let index = parseInt(num, 10)
         if (index == 1) {
             playInteract()
             receiptMenu.start(product)
+            executed = true
         } else if (index == 2) {
             playInteract()
             productsMenu.back()
+            executed = true
         }
     } else if (text.includes("đồng ý") || text.includes("có") || text.includes("mua")) {
         // Buy
         playInteract()
         receiptMenu.start(product)
+        executed = true
     } else if (text.includes("không") || text.includes("hủy")) {
         // Cancel
         playInteract()
         productsMenu.back()
+        executed = true
+    }
+    if (!executed) {
+        playError()
+        playVoices([{
+            id: "voice_error",
+            text: "không nhận diện được giọng nói. xin vui lòng thử lại"
+        }])
     }
 }
 

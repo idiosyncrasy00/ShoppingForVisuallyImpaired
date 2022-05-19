@@ -1,7 +1,7 @@
 
 import { categoryMenu, productsMenu } from "./list.js";
 import { request } from "../util/axios.js"
-import { playInteract, playVoices } from "../sound/sound.js"
+import { playError, playInteract, playVoices } from "../sound/sound.js"
 import { getSelectedIndex } from "../view/block.js";
 
 
@@ -32,21 +32,40 @@ categoryMenu.on_select = async (index) => {
 categoryMenu.on_voice = async (voice) => {
     let text = voice.text
     let num = voice.num
+    let executed = false
     if (text.includes("chọn")) {
         // Choose category
         let index = parseInt(num, 10)
-        if (text.includes("đầu") || text.includes("nhất")) {
+        if (text.includes("đầu") || text.includes("thứ nhất")) {
             index = 1
         } else if (text.includes("cuối")) {
             index = categoryMenu.datas.length
         }
-        if (index != NaN) {
-            if (index > 0 && index <= categoryMenu.datas.length) {
-                playInteract()
-                let category = categoryMenu.datas[index - 1]
-                productsMenu.start(category)
+        if (index != NaN && index > 0 && index <= categoryMenu.datas.length) {
+            playInteract()
+            let category = categoryMenu.datas[index - 1]
+            executed = true
+            productsMenu.start(category)
+        } else {
+            // Select by name
+            let query = text.replace("chọn", "").replace("danh mục", "").trim()
+            for (var i = 0; i < categoryMenu.datas.length; i++) {
+                let cate = categoryMenu.datas[i]
+                if (cate.category.toLowerCase().includes(query)) {
+                    executed = true
+                    playInteract()
+                    productsMenu.start(cate)
+                    break
+                }
             }
         }
+    }
+    if (!executed) {
+        playError()
+        playVoices([{
+            id: "voice_error",
+            text: "không nhận diện được giọng nói. xin vui lòng thử lại"
+        }])
     }
 }
 
