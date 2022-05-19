@@ -1,7 +1,6 @@
 const express = require("express")
 const bodyParser = require("body-parser")
 const cors = require("cors")
-const helmet = require("helmet")
 const socket = require("socket.io")
 
 
@@ -11,7 +10,6 @@ const app = express()
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(helmet());
 app.use(cors({
     origin: "*"
 }));
