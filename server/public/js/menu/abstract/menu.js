@@ -6,12 +6,14 @@ import {
     enable_keyevent,
     setReturnCallback,
     setSelectCallback,
-    setListenCallback
-} from "../view/key.js"
-
-import { spawnBlock, getSelectedIndex, setFocusCallback } from "../view/block.js"
-
-import { playVoices, stopVoices, playInteract } from "../sound/sound.js"
+    setListenCallback,
+    setVoiceCallback,
+    start_record_mode
+} from "../../view/key.js"
+import { spawnBlock, getSelectedIndex, setFocusCallback } from "../../view/block.js"
+import { playVoices, stopVoices, playInteract } from "../../sound/sound.js"
+import { startRecord, stopRecord } from "../../sound/record.js";
+import { speech_to_text } from "../../util/socket.js";
 
 const titleField = document.getElementById("title")
 
@@ -36,8 +38,10 @@ export class Menu {
         this.blacklistFields = ["_id", "voiceline", "date"]
         this.prev_data = null
         this.init = async () => {}  // update block_data and voice_data
-        this.on_select = async (index) => { }
-        this.on_return = async () => { }
+        this.on_select = async (index) => {}
+        this.on_return = async () => {}
+        this.on_voice = async (voice) => {}
+        this.is_recording = false
     }
 
     async start(prev_data) {
@@ -63,13 +67,21 @@ export class Menu {
     build() {
         setFocusCallback((index, first) => {
             let voices = []
-            if (first && this.voice_init) {
-                voices.push(this.voice_init)
-            }
-            let voice = this.voice_data[index]
-            if (voice != null) {
-                for (const v of voice) {
-                    voices.push(v)
+            if (first) {
+                if (this.voice_init) {
+                    voices.unshift(this.voice_init)
+                }
+                for (const voice of this.voice_data) {
+                    for (const v of voice) {
+                        voices.push(v)
+                    }
+                }
+            } else {
+                let voice = this.voice_data[index]
+                if (voice != null) {
+                    for (const v of voice) {
+                        voices.push(v)
+                    }
                 }
             }
             if (voices.length > 0) {
@@ -86,8 +98,16 @@ export class Menu {
             playInteract()
             await this.on_return()
         })
-        setListenCallback(() => {
+        setListenCallback(async () => {
+            playInteract()
             playVoices(this.voice_data[getSelectedIndex()])
+        })
+        setVoiceCallback(async () => {
+            if (!this.is_recording) {
+                await this.startRecord()
+            } else {
+                await this.stopRecord()
+            }
         })
         titleField.innerHTML = this.title
         enable_keyevent()
@@ -100,6 +120,38 @@ export class Menu {
         this.voice_data = []
         this.blacklistFields = ["_id", "voiceline", "date"]
         this.prev_data = null
+    }
+
+    async startRecord() {
+        this.is_recording = true
+        playInteract()
+        start_record_mode()
+        playVoices([{
+            id: "voice_command",
+            text: "hãy nói sau tiếng bíp"
+        }], () => {
+            playInteract()
+            startRecord()
+            setTimeout(async () => {
+                if (this.is_recording) {
+                    await this.stopRecord()
+                }
+            }, 5000)
+        })
+    }
+
+    async stopRecord() {
+        this.is_recording = false
+        playInteract()
+        enable_keyevent()
+        playVoices([{
+            id: "voice_execute",
+            text: "đang xử lý tiếng nói"
+        }])
+        let blob = await stopRecord()
+        let voice = await speech_to_text(blob)
+        console.log(voice)
+        await this.on_voice(voice)
     }
 
     dataToString() {

@@ -1,7 +1,7 @@
 
-import { mainmenu } from "./menu.js";
+import { categoryMenu } from "./menu/index.js"
 
 
 window.onload = async () => {
-    mainmenu()
+    categoryMenu.start()
 }

@@ -10,7 +10,9 @@ var ttsPath = "../../tts/"
 
 const socket = io()
 var ttsAudio = null
-var audios = []
+var voices = []
+var playingAudio = null
+var afterPlayingCallback = () => {}
 
 
 export function playUp() {
@@ -33,7 +35,7 @@ export function playInteract() {
 }
 
 
-export async function playTTS(voice) {
+export async function playTTS(voice, callback=()=>{}) {
     if (voice.id && voice.text) {
         if (ttsAudio != null) {
             ttsAudio.pause()
@@ -44,40 +46,44 @@ export async function playTTS(voice) {
             })
         })
         ttsAudio = new Audio(ttsPath + filename)
+        ttsAudio.addEventListener("ended", callback)
         await ttsAudio.play()
     }
 }
 
 
-export async function playVoices(voices) { // [ {id, text} ]
-    if (voices != null) {
-        if (voices.length > 0) {
-            for (const audio of audios) {
-                audio.pause()
-            }
-            audios = []
-            for await (const voice of voices) {
-                if (voice.id && voice.text) {
-                    let filename = await generate_audio(voice.id, voice.text)
-                    audios.push(new Audio(ttsPath + filename))
-                }
-            }
-            for (var i = 0; i < audios.length - 1; i++) {
-                audios[i].addEventListener("ended", () => {
-                    audios.shift()
-                    if (audios.length > 0) {
-                        audios[0].play()
-                    }
-                })
-            }
-            audios[0].play()
+export async function playVoices(_voices, callback=()=>{}) { // [ {id, text} ]
+    if (_voices != null) {
+        if (_voices.length > 0) {
+            stopVoices()
+            voices = _voices
+            afterPlayingCallback = callback
+            await play_next()
         }
     }
 }
 
 
 export async function stopVoices() {
-    for (const audio of audios) {
-        audio.pause()
+    if (playingAudio != null) {
+        playingAudio.pause()
+        playingAudio = null
+        afterPlayingCallback = () => {}
+    }
+}
+
+
+async function play_next() {
+    if (voices.length > 0) {
+        let voice = voices.shift()
+        let filename = await generate_audio(voice.id, voice.text)
+        playingAudio = new Audio(ttsPath + filename)
+        playingAudio.addEventListener("ended", async () => {
+            await play_next()
+        })
+        playingAudio.play()
+    } else {
+        playingAudio = null
+        afterPlayingCallback()
     }
 }
