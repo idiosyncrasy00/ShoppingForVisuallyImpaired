@@ -1,7 +1,7 @@
 
 import { categoryMenu, productsMenu, confirmMenu } from "./list.js";
 import { request } from "../util/axios.js"
-import { playInteract, playVoices } from "../sound/sound.js"
+import { playInteract, playVoices, playError } from "../sound/sound.js"
 import { getSelectedIndex } from "../view/block.js";
 
 
@@ -37,25 +37,45 @@ productsMenu.on_return = async () => {
 productsMenu.on_voice = async (voice) => {
     let text = voice.text
     let num = voice.num
+    let executed = false
     if (text.includes("quay lại")) {
         // Return
         playInteract()
         categoryMenu.back()
+        executed = true
     } else if (text.includes("chọn")) {
         // Choose product
         let index = parseInt(num, 10)
-        if (text.includes("đầu") || text.includes("nhất")) {
+        if (text.includes("đầu") || text.includes("thứ nhất")) {
             index = 1
         } else if (text.includes("cuối")) {
             index = productsMenu.datas.length
         }
-        if (index != NaN) {
-            if (index > 0 && index <= productsMenu.datas.length) {
-                playInteract()
-                let product = productsMenu.datas[index - 1]
-                confirmMenu.start(product)
+        if (index != NaN && index > 0 && index <= productsMenu.datas.length) {
+            playInteract()
+            let product = productsMenu.datas[index - 1]
+            confirmMenu.start(product)
+            executed = true
+        } else {
+            // Select by name
+            let query = text.replace("chọn", "").replace("sản phẩm", "").trim()
+            for (var i = 0; i < productsMenu.datas.length; i++) {
+                let product = productsMenu.datas[i]
+                if (product.name.toLowerCase().includes(query)) {
+                    executed = true
+                    playInteract()
+                    confirmMenu.start(product)
+                    break
+                }
             }
         }
+    }
+    if (!executed) {
+        playError()
+        playVoices([{
+            id: "voice_error",
+            text: "không nhận diện được giọng nói. xin vui lòng thử lại"
+        }])
     }
 }
 

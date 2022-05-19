@@ -11,7 +11,7 @@ receiptMenu.init = async () => {
     receiptMenu.block_data = [ "Quay lại" ]
     receiptMenu.voice_init = {
         id: `receipt_${product._id}`,
-        text: `bạn đã thành công ${product.name}. ấn phím thứ nhất hoặc thứ hai để quay về màn hình chính`
+        text: `bạn đã mua thành công ${product.name}. ấn phím thứ nhất hoặc thứ hai để quay về màn hình chính`
     }
 }
 
@@ -24,12 +24,8 @@ receiptMenu.on_return = async () => {
 }
 
 receiptMenu.on_voice = async (voice) => {
-    let text = voice.text
-    if (text.includes("quay lại")) {
-        // Return main menu
-        playInteract()
-        categoryMenu.back()
-    }
+    playInteract()
+    categoryMenu.back()
 }
 
 receiptMenu.on_listen = async () => {

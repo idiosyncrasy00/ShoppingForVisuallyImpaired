@@ -42,6 +42,7 @@ async function handletext(text) {
     // Manipulate string
     text = text.replace(".", " ")
     text = text.toLowerCase()
+    text = text.trim()
     // Handle number
     let result = ""
     let nums = text.match(/\d/g)
