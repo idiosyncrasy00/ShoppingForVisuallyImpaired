@@ -33,7 +33,7 @@ export function playInteract() {
 }
 
 
-export async function playTTS(voice) {
+export async function playTTS(voice, callback=()=>{}) {
     if (voice.id && voice.text) {
         if (ttsAudio != null) {
             ttsAudio.pause()
@@ -44,12 +44,13 @@ export async function playTTS(voice) {
             })
         })
         ttsAudio = new Audio(ttsPath + filename)
+        ttsAudio.addEventListener("ended", callback)
         await ttsAudio.play()
     }
 }
 
 
-export async function playVoices(voices) { // [ {id, text} ]
+export async function playVoices(voices, callback=()=>{}) { // [ {id, text} ]
     if (voices != null) {
         if (voices.length > 0) {
             for (const audio of audios) {
@@ -70,6 +71,7 @@ export async function playVoices(voices) { // [ {id, text} ]
                     }
                 })
             }
+            audios[audios.length - 1].addEventListener("ended", callback)
             audios[0].play()
         }
     }

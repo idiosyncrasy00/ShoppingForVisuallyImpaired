@@ -39,13 +39,20 @@ async function text_to_num(text) {
 
 
 async function handletext(text) {
-    let num = text.match(/\d/g).join("")
-    if (num == "") {
-        num = await text_to_num(text)
+    // Manipulate string
+    text = text.replace(".", " ")
+    text = text.toLowerCase()
+    // Handle number
+    let result = ""
+    let nums = text.match(/\d/g)
+    if (nums != null) {
+        result = nums.join("")
+    } else {
+        result = await text_to_num(text)
     }
     return {
         text: text,
-        num: num
+        num: result
     }
 }
 
