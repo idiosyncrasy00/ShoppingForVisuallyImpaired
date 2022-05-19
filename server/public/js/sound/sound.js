@@ -12,6 +12,7 @@ const socket = io()
 var ttsAudio = null
 var voices = []
 var playingAudio = null
+var afterPlayingCallback = () => {}
 
 
 export function playUp() {
@@ -56,6 +57,7 @@ export async function playVoices(_voices, callback=()=>{}) { // [ {id, text} ]
         if (_voices.length > 0) {
             stopVoices()
             voices = _voices
+            afterPlayingCallback = callback
             await play_next()
         }
     }
@@ -66,6 +68,7 @@ export async function stopVoices() {
     if (playingAudio != null) {
         playingAudio.pause()
         playingAudio = null
+        afterPlayingCallback = () => {}
     }
 }
 
@@ -81,5 +84,6 @@ async function play_next() {
         playingAudio.play()
     } else {
         playingAudio = null
+        afterPlayingCallback()
     }
 }

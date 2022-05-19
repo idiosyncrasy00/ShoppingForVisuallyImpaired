@@ -40,7 +40,7 @@ export class Menu {
         this.init = async () => {}  // update block_data and voice_data
         this.on_select = async (index) => {}
         this.on_return = async () => {}
-        this.on_voice = async () => {}
+        this.on_voice = async (voice) => {}
         this.is_recording = false
     }
 
@@ -149,10 +149,9 @@ export class Menu {
             text: "đang xử lý tiếng nói"
         }])
         let blob = await stopRecord()
-        let result = await speech_to_text(blob)
-        console.log("RESULT RECORDED")
-        console.log(result)
-        await this.on_voice(result)
+        let voice = await speech_to_text(blob)
+        console.log(voice)
+        await this.on_voice(voice)
     }
 
     dataToString() {
