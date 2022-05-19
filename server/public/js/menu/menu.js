@@ -6,12 +6,13 @@ import {
     enable_keyevent,
     setReturnCallback,
     setSelectCallback,
-    setListenCallback
+    setListenCallback,
+    setVoiceCallback
 } from "../view/key.js"
-
 import { spawnBlock, getSelectedIndex, setFocusCallback } from "../view/block.js"
-
 import { playVoices, stopVoices, playInteract } from "../sound/sound.js"
+import { startRecord, stopRecord } from "../sound/record.js";
+import { speech_to_text } from "../util/socket.js";
 
 const titleField = document.getElementById("title")
 
@@ -36,8 +37,10 @@ export class Menu {
         this.blacklistFields = ["_id", "voiceline", "date"]
         this.prev_data = null
         this.init = async () => {}  // update block_data and voice_data
-        this.on_select = async (index) => { }
-        this.on_return = async () => { }
+        this.on_select = async (index) => {}
+        this.on_return = async () => {}
+        this.on_voice = async () => {}
+        this.is_recording = false
     }
 
     async start(prev_data) {
@@ -86,8 +89,16 @@ export class Menu {
             playInteract()
             await this.on_return()
         })
-        setListenCallback(() => {
+        setListenCallback(async () => {
+            playInteract()
             playVoices(this.voice_data[getSelectedIndex()])
+        })
+        setVoiceCallback(async () => {
+            if (!this.is_recording) {
+                await this.startRecord()
+            } else {
+                await this.stopRecord()
+            }
         })
         titleField.innerHTML = this.title
         enable_keyevent()
@@ -100,6 +111,37 @@ export class Menu {
         this.voice_data = []
         this.blacklistFields = ["_id", "voiceline", "date"]
         this.prev_data = null
+    }
+
+    async startRecord() {
+        this.is_recording = true
+        playInteract()
+        playVoices([{
+            id: "voice_command",
+            text: "hãy nói sau tiếng bíp"
+        }], () => {
+            playInteract()
+            startRecord()
+            setTimeout(async () => {
+                if (this.is_recording) {
+                    await this.stopRecord()
+                }
+            }, 5000)
+        })
+    }
+
+    async stopRecord() {
+        this.is_recording = false
+        playInteract()
+        playVoices([{
+            id: "voice_execute",
+            text: "đang xử lý tiếng nói"
+        }])
+        let blob = await stopRecord()
+        let result = await speech_to_text(blob)
+        console.log("RESULT RECORDED")
+        console.log(result)
+        await this.on_voice(result)
     }
 
     dataToString() {

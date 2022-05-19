@@ -3,10 +3,10 @@ import { up, down, getSelectedIndex } from "./block.js";
 import { playError } from "../sound/sound.js";
 
 
-var selectCallback = (index) => {}
-var returnCallback = () => {}
-var listenCallback = () => {}
-var voiceCallback = () => {}
+var selectCallback = async (index) => {}
+var returnCallback = async () => {}
+var listenCallback = async () => {}
+var voiceCallback = async () => {}
 
 
 var key_delay = 500
@@ -14,7 +14,7 @@ var key_ready = true
 
 
 export function enable_keyevent() {
-    document.onkeydown = e => {
+    document.onkeydown = async (e) => {
         if (key_ready) {
             key_ready = false
             setTimeout(() => key_ready = true, key_delay)
@@ -26,13 +26,13 @@ export function enable_keyevent() {
                 e.preventDefault()
                 down()
             } else if (e.key == "f") {
-                selectCallback(getSelectedIndex())
+                await selectCallback(getSelectedIndex())
             } else if (e.key == "g") {
-                returnCallback()
+                await returnCallback()
             } else if (e.key == "h") {
-                listenCallback()
+                await listenCallback()
             } else if (e.key == "j") {
-                voiceCallback()
+                await voiceCallback()
             } else {
                 playError()
             }
@@ -47,10 +47,10 @@ export function disable_keyevent() {
 
 
 export function disable_callback() {
-    selectCallback = (index) => {}
-    returnCallback = () => {}
-    listenCallback = () => {}
-    voiceCallback = () => {}
+    selectCallback = async (index) => {}
+    returnCallback = async () => {}
+    listenCallback = async () => {}
+    voiceCallback = async () => {}
 }
 
 

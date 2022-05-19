@@ -11,9 +11,9 @@ export async function generate_audio(id, text) {
 }
 
 
-export async function speech_to_text(chunks) {
+export async function speech_to_text(blob) {
     return await new Promise(res => {
-        socket.emit("stt", chunks, (result) => {
+        socket.emit("stt", blob, (result) => {
             console.log(result)
             res(result)
         })
