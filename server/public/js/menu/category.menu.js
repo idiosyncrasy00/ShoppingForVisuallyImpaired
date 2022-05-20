@@ -1,5 +1,5 @@
 
-import { categoryMenu, productsMenu } from "./list.js";
+import { categoryMenu, productsMenu, searchMenu } from "./list.js";
 import { request } from "../util/axios.js"
 import { playError, playInteract, playVoices } from "../sound/sound.js"
 import { getSelectedIndex } from "../view/block.js";
@@ -8,7 +8,7 @@ import { getSelectedIndex } from "../view/block.js";
 categoryMenu.init = async () => {
     categoryMenu.title = "Danh mục"
     categoryMenu.datas = await request("get", "/api/category/get")
-    categoryMenu.block_data = categoryMenu.dataToString()
+    categoryMenu.block_data = categoryMenu.categoryToString()
     for (var i = 0; i < categoryMenu.datas.length; i++) {
         categoryMenu.voice_data.push([{
             id: `category${i + 1}`,
@@ -59,6 +59,14 @@ categoryMenu.on_voice = async (voice) => {
                 }
             }
         }
+    } else if (text.includes("tìm")) {
+        // Search product
+        let query = text.replace("tìm", "").replace("kiếm", "").replace("sản phẩm", "").trim()
+        if (query != "") {
+            executed = true
+            playInteract()
+            searchMenu.start(query)
+        }
     }
     if (!executed) {
         playError()
@@ -85,6 +93,15 @@ categoryMenu.on_listen = async () => {
         id: "guide_34",
         text: "ấn phím thứ ba để nghe hướng dẫn. ấn phím thứ tư để dùng giọng nói"
     })
+    voices.push({
+        id: "guide_choose",
+        text: "các lựa chọn bạn có thể chọn là"
+    })
+    for (const voice of categoryMenu.voice_data) {
+        for (const v of voice) {
+            voices.push(v)
+        }
+    }
     playVoices(voices)
 }
 
