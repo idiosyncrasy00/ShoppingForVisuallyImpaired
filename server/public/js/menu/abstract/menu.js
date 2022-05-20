@@ -1,5 +1,4 @@
 
-
 import {
     disable_callback,
     disable_keyevent,
@@ -18,16 +17,6 @@ import { speech_to_text } from "../../util/socket.js";
 const titleField = document.getElementById("title")
 
 
-/*  blockData:
-{
-    data: "name",
-    voices: [
-        { id: "123", text: "1244" }
-    ]
-}
-*/
-
-
 export class Menu {
     constructor() {
         this.title = "Title"
@@ -43,6 +32,8 @@ export class Menu {
         this.on_voice = async (voice) => {}
         this.on_listen = async () => {}
         this.is_recording = false
+        this.is_introduction = true
+        this.voice_introduction = null
     }
 
     async start(prev_data) {
@@ -69,8 +60,14 @@ export class Menu {
         setFocusCallback((index, first) => {
             let voices = []
             if (first) {
+                if (this.is_introduction) {
+                    this.is_introduction = false
+                    if (this.voice_introduction) {
+                        voices.push(this.voice_introduction)
+                    }
+                }
                 if (this.voice_init) {
-                    voices.unshift(this.voice_init)
+                    voices.push(this.voice_init)
                 }
                 for (const voice of this.voice_data) {
                     for (const v of voice) {
@@ -158,7 +155,14 @@ export class Menu {
             }
         }
         console.log(voice)
-        await this.on_voice(voice)
+        // Pre Handle voice
+        let text = voice.text
+        if (text.includes("chương trình gì")) {
+            playInteract()
+            playVoices([this.getIntroduction()])
+        } else {
+            await this.on_voice(voice)
+        }
     }
 
     dataToString() {
@@ -194,6 +198,13 @@ export class Menu {
             _str_datas.push(`<b>Danh mục ${i + 1}:</b> ${this.datas[i].category}`)
         }
         return _str_datas
+    }
+
+    getIntroduction() {
+        return {
+            id: "voice_introduction",
+            text: "chào mừng bạn đến với chương trình mua hàng cho người khiếm thị. bạn có thể sử dụng bàn phím hoặc giọng nói để mua hàng. dưới đây là hướng dẫn sử dụng các phím. sử dụng hai nút lên xuống để di chuyển giữa các ô. nút thứ nhất dùng để lựa chọn. nút thứ hai dùng để quay lại. nút thứ ba dùng để nghe hướng dẫn. nút thứ tư dùng để bắt đầu giọng nói."
+        }
     }
 }
 
