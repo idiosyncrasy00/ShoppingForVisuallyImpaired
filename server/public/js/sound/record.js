@@ -4,7 +4,6 @@ var mediaRecorder = null
 
 export function startRecord() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        console.log("Media suported")
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
                 let audiContext = new window.AudioContext()

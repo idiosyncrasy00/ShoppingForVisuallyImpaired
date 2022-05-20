@@ -22,6 +22,7 @@ categoryMenu.init = async () => {
         id: "category_init",
         text: "dưới đây là danh sách các danh mục sản phẩm"
     }
+    categoryMenu.voice_introduction = categoryMenu.getIntroduction()
 }
 
 categoryMenu.on_select = async (index) => {
