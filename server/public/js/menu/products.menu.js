@@ -1,5 +1,5 @@
 
-import { categoryMenu, productsMenu, confirmMenu } from "./list.js";
+import { categoryMenu, productsMenu, confirmMenu, searchMenu } from "./list.js";
 import { request } from "../util/axios.js"
 import { playInteract, playVoices, playError } from "../sound/sound.js"
 import { getSelectedIndex } from "../view/block.js";
@@ -9,7 +9,7 @@ productsMenu.init = async () => {
     let category = productsMenu.prev_data
     productsMenu.title = `Sản phẩm trong ${category.category}`
     productsMenu.datas = await request("post", "/api/category/list", { category: category.category })
-    productsMenu.block_data = productsMenu.dataToString()
+    productsMenu.block_data = productsMenu.productToString()
     for (var i = 0; i < productsMenu.datas.length; i++) {
         productsMenu.voice_data.push([{
             id: `product${i + 1}`,
@@ -27,7 +27,7 @@ productsMenu.init = async () => {
 
 productsMenu.on_select = async (index) => {
     let product = productsMenu.datas[index]
-    confirmMenu.start(product)
+    confirmMenu.start({ product, menu: productsMenu })
 }
 
 productsMenu.on_return = async () => {
@@ -54,7 +54,7 @@ productsMenu.on_voice = async (voice) => {
         if (index != NaN && index > 0 && index <= productsMenu.datas.length) {
             playInteract()
             let product = productsMenu.datas[index - 1]
-            confirmMenu.start(product)
+            confirmMenu.start({ product, menu: productsMenu })
             executed = true
         } else {
             // Select by name
@@ -64,10 +64,18 @@ productsMenu.on_voice = async (voice) => {
                 if (product.name.toLowerCase().includes(query)) {
                     executed = true
                     playInteract()
-                    confirmMenu.start(product)
+                    confirmMenu.start({ product, menu: productsMenu })
                     break
                 }
             }
+        }
+    } else if (text.includes("tìm")) {
+        // Search product
+        let query = text.replace("tìm", "").replace("kiếm", "").replace("sản phẩm", "").trim()
+        if (query != "") {
+            executed = true
+            playInteract()
+            searchMenu.start(query)
         }
     }
     if (!executed) {
@@ -96,6 +104,15 @@ productsMenu.on_listen = async () => {
         id: "guide_34",
         text: "ấn phím thứ ba để nghe hướng dẫn. ấn phím thứ tư để dùng giọng nói"
     })
+    voices.push({
+        id: "guide_choose",
+        text: "các lựa chọn bạn có thể chọn là"
+    })
+    for (const voice of productsMenu.voice_data) {
+        for (const v of voice) {
+            voices.push(v)
+        }
+    }
     playVoices(voices)
 }
 

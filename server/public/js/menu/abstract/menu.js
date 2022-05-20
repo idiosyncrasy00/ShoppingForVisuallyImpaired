@@ -151,6 +151,12 @@ export class Menu {
         }])
         let blob = await stopRecord()
         let voice = await speech_to_text(blob)
+        if (!voice) {
+            voice = {
+                text: "",
+                num: ""
+            }
+        }
         console.log(voice)
         await this.on_voice(voice)
     }
@@ -164,6 +170,28 @@ export class Menu {
                 str += `${key}: ${value[key]}<br>`
             }
             _str_datas.push(str)
+        }
+        return _str_datas
+    }
+
+    productToString() {
+        let _str_datas = []
+        for (var i = 0; i < this.datas.length; i++) {
+            let _data = this.datas[i]
+            let str = `<b>Sản phẩm ${i + 1}:</b><br>`
+            str +=`Tên sản phẩm: ${_data.name}<br>`
+            str += `Danh mục: ${_data.category}<br>`
+            str += `Chi tiết: ${_data.description}<br>`
+            str += `Giá: ${_data.price} vnd`
+            _str_datas.push(str)
+        }
+        return _str_datas
+    }
+
+    categoryToString() {
+        let _str_datas = []
+        for (var i = 0; i < this.datas.length; i++) {
+            _str_datas.push(`<b>Danh mục ${i + 1}:</b> ${this.datas[i].category}`)
         }
         return _str_datas
     }

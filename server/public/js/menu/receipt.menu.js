@@ -9,6 +9,10 @@ receiptMenu.init = async () => {
     await request("post", "/api/products/buy", product)
     receiptMenu.title = `Mua thành công ${product.name} !`
     receiptMenu.block_data = [ "Quay lại" ]
+    receiptMenu.voice_data = [[{
+        id: "voice_return",
+        text: "quay lại"
+    }]]
     receiptMenu.voice_init = {
         id: `receipt_${product._id}`,
         text: `bạn đã mua thành công ${product.name}. ấn phím thứ nhất hoặc thứ hai để quay về màn hình chính`
