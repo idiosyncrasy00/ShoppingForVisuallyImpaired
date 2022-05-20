@@ -13,6 +13,7 @@ import { spawnBlock, getSelectedIndex, setFocusCallback } from "../../view/block
 import { playVoices, stopVoices, playInteract } from "../../sound/sound.js"
 import { startRecord, stopRecord } from "../../sound/record.js";
 import { speech_to_text } from "../../util/socket.js";
+import { overlay_show_result, overlay_start } from "../../view/overlay.js";
 
 const titleField = document.getElementById("title")
 
@@ -129,6 +130,7 @@ export class Menu {
             text: "hãy nói sau tiếng bíp"
         }], () => {
             playInteract()
+            overlay_start()
             startRecord()
             setTimeout(async () => {
                 if (this.is_recording) {
@@ -155,11 +157,15 @@ export class Menu {
             }
         }
         console.log(voice)
+        overlay_show_result(voice.text)
         // Pre Handle voice
         let text = voice.text
         if (text.includes("chương trình gì")) {
             playInteract()
             playVoices([this.getIntroduction()])
+        } else if (text.includes("hướng dẫn")) {
+            playInteract()
+            await this.on_listen()
         } else {
             await this.on_voice(voice)
         }
